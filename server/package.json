@@ -14,5 +14,8 @@
     "psl": "^1.9.0",
     "set-cookie-parser": "^2.6.0",
     "whois-json": "^2.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }

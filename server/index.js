@@ -7,8 +7,14 @@ const { checkHeaders, MAX_SCORE: HEADERS_MAX } = require('./checks/headers');
 const { checkCookies, MAX_SCORE: COOKIES_MAX } = require('./checks/cookies');
 const { checkWhois, MAX_SCORE: WHOIS_MAX } = require('./checks/whois');
 
-const PORT = process.env.PORT || 5000;
-const FETCH_TIMEOUT = Number(process.env.FETCH_TIMEOUT || 8000);
+// NOTE:
+// macOS では 5000 番ポートが OS 側プロセスに使われていることがあり、
+// その場合フロントの proxy が別プロセスに向いて 403 になることがあります。
+// 環境変数を設定しなくても確実に動くよう、デフォルトを 5050 にします。
+const PORT = Number(process.env.PORT) || 5050;
+
+// 環境変数が無くても動作するデフォルト。
+const FETCH_TIMEOUT = Number(process.env.FETCH_TIMEOUT) || 8000;
 
 const app = express();
 
@@ -47,7 +53,7 @@ const summarizeOverall = (categories) => {
   let rating = 'Safe';
   if (normalizedScore < 50) {
     rating = 'Dangerous';
-  } else if (normalizedScore < 75) {
+  } else if (normalizedScore < 60) {
     rating = 'Warning';
   }
 
@@ -153,7 +159,6 @@ app.post('/api/check', async (req, res) => {
 
 if (require.main === module) {
   app.listen(PORT, () => {
-    // eslint-disable-next-line no-console
     console.log(`SafeURL Checker server running on port ${PORT}`);
   });
 }
